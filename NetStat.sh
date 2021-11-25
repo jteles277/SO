@@ -186,8 +186,7 @@
                     
                 fi
                 # return changed and added values to the array  
-                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate ${tot_tx[$i]} ${tot_rx[$i]}";
-                echo ${data[$i]};
+                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate ${tot_tx[$i]} ${tot_rx[$i]}"; 
                 
             else
                 # return changed and added values to the array  
