@@ -115,8 +115,8 @@
     
     
     # setting inicial value of total tx and rx 
-    tot_tx=();
-    tot_rx=();
+    tot_tx=0;
+    tot_rx=0;
 
     #interation
     iter=0;
@@ -142,9 +142,15 @@
         IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
         for ((i=1; i < $N; i++ ))
         do
-            
-            data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 
-            
+            if [ $iter -eq 0 ]; 
+            then
+                data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 
+            else
+                tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');      
+                tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                
+                data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]} 0 0 $tot_tx $tot_rx"; 
+            fi
         done    
         
          
@@ -178,17 +184,18 @@
 
                 if [ $iter -eq 0 ]; 
                 then
-                    tot_tx[$i]=$t_Gap;
-                    tot_rx[$i]=$r_Gap;
+                    tot_tx=$t_Gap;
+                    tot_rx=$r_Gap;
                     
                 else
-                     
-                    tot_tx[$i]=$((tot_tx[$i]+$t_Gap)); 
-                    tot_rx[$i]=$((tot_rx[$i]+$r_Gap));
-                    
+                    tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
+                    tot_tx=$(($tot_tx+$t_Gap));
+                    tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                    tot_rx=$(($tot_rx+$r_Gap)); 
+                    echo $r_Gap;
                 fi
                 # return changed and added values to the array  
-                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate ${tot_tx[$i]} ${tot_rx[$i]}";
+                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate $tot_tx $tot_rx";
                 echo ${data[$i]};
                 
             else
@@ -251,6 +258,9 @@
         # define if its to continue looping or not
         looping=$loop;
         iter=$(($iter+1));
+
+        # Sort to default 
+        SortAlpha
 
     done
 #
