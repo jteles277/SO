@@ -1,6 +1,18 @@
 #!/bin/bash
 
 # functions
+    Regex(){
+        #Runs trough all of the interfaces and checks wich ones dont contain the regex in question
+        for (( i=1; i < $N; i++ ))
+        do
+            interface_name=$(echo "${data[$i]}" | awk '{print $1;}'); 
+            echo $regex
+            if [[ ${interface_name} =~ ^$regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
+                echo $interface_name                     # regex e exatamente igual   
+            fi                                           #precisa de uma nova solução 
+
+        done
+    }
     Reverse(){
         # reverse order
         for (( i = 1; $i <= $(($N - $i)); $((i = $i + 1)) ))
@@ -71,16 +83,18 @@
     getMax=0;           # boolean to help manage last one
     loop=0;             # boolean to declare if is to loop or not
     looping=1;          # boolean to show the state(if is looping or not)
-
+    regex=""
     # process options
     for op in "$@"; do
-
+        #get penultimate argument and checks if is diferent from other cases
+      if [[ "$op" == "${@:(-2):1}" ]] && [[ "$op" != "-"* ]] && [ $getMax -ne 1 ]; then
+           regex="$op"
+      fi
         if [ $getMax -eq 1 ]; then
             max=$op;
             getMax=0;   
             continue;
         fi 
-
         case $op in
             -l)
                 loop=1;
@@ -108,7 +122,7 @@
                 ;;
             -T)
                 order="t"
-                ;;        
+                ;;  
         esac
     done
 
@@ -215,6 +229,11 @@
             N=$(($max+1));
         fi   
 
+        if [ ! -z "$regex" ]; then
+            #Regex will remove the ones that dont match regex pattern
+            Regex
+        fi
+
         # print Label
         if [ $iter -eq 0 ]; then
             if [ $loop -eq 1 ]; 
@@ -226,6 +245,10 @@
             
         fi  
         
+
+
+
+
         # print Information
         for (( i=1; i < $N; i++ )); do
             int=$(echo "${data[$i]}" | awk '{print $1;}');
