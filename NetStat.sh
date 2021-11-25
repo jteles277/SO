@@ -157,6 +157,7 @@
         for ((i=0; i < $N; i++ ))
         do
             data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 
+            
         done    
         
          
@@ -164,7 +165,9 @@
 
         # get wanted data
         for ((i=0; i < $N; i++ ))
-        do  
+        do   
+        
+            
             # get innterface
             interface=$(echo "${i_data[$i]}" | awk '{print $1;}');
 
@@ -197,7 +200,7 @@
                      
                     tot_tx[$i]=$((tot_tx[$i]+$t_Gap)); 
                     tot_rx[$i]=$((tot_rx[$i]+$r_Gap));
-                    
+                    echo "$i - ${tot_rx[$i]}";
                 fi
                 # return changed and added values to the array  
                 data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate ${tot_tx[$i]} ${tot_rx[$i]}"; 
@@ -207,7 +210,7 @@
                 data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate";
             fi  
 
-            
+           
             
         done
     
@@ -259,9 +262,9 @@
 
             if [ $loop -eq 1 ]; 
             then
-                tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
-                tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
-                printf "%-6s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tot_tx $tot_rx;
+                tmp_tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
+                tmp_tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                printf "%-6s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tmp_tot_tx $tmp_tot_rx;
             else
                 printf "%-6s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate;
             fi  
