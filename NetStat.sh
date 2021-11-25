@@ -111,8 +111,12 @@
         esac
     done
 
-    #echo "info = $info";
     
+    
+    # setting inicial value of total tx and rx 
+    tot_tx=0;
+    tot_rx=0;
+
     #interation
     iter=0;
 
@@ -120,13 +124,12 @@
 
         # get inicial array and organize it in: i_data[] = interface_name rx tx
         IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
-        IFS=$'\n' read -r -d '' -a i_RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
-        IFS=$'\n' read -r -d '' -a f_TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
+        IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
+        IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
         N=${#interfaces[@]};
         for ((i=1; i < $N; i++ ))
         do
-            i_data[$i]="${interfaces[$i]} ${i_RXs[$i]} ${f_TXs[$i]}";
-            echo ${i_data[$i]};
+            i_data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}";  
         done    
         
         # wait given seconds
@@ -134,12 +137,19 @@
 
         # get final array and organize it in: i_data[] = interface_name rx tx
         IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
-        IFS=$'\n' read -r -d '' -a i_RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
-        IFS=$'\n' read -r -d '' -a f_TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
+        IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
+        IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
         for ((i=1; i < $N; i++ ))
         do
-            data[$i]="${interfaces[$i]} ${i_RXs[$i]} ${f_TXs[$i]}";
-            echo ${data[$i]};
+            if [ $iter -eq 0 ]; 
+            then
+                data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 
+            else
+                tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');      
+                tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                
+                data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]} 0 0 $tot_tx $tot_rx"; 
+            fi
         done    
         
 
@@ -167,8 +177,32 @@
             t_Gap=$((t_Gap/byte_div));
             t_Rate=$(bc <<<"scale=1;$t_Gap/$sleep_time");
 
-            # return changed and added values to the array  
-            data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate";
+            # depending if is looping we have more information
+            if [ $loop -eq 1 ]; 
+            then    
+
+                if [ $iter -eq 0 ]; 
+                then
+                    tot_tx=$t_Gap;
+                    tot_rx=$r_Gap;
+                    
+                else
+                    tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
+                    tot_tx=$(($tot_tx+$t_Gap));
+                    tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                    tot_rx=$(($tot_rx+$r_Gap)); 
+                    echo $r_Gap;
+                fi
+                # return changed and added values to the array  
+                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate $tot_tx $tot_rx";
+                echo ${data[$i]};
+                
+            else
+                # return changed and added values to the array  
+                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate";
+            fi  
+
+            
             
         done
     
@@ -192,7 +226,13 @@
 
         #print 
         if [ $iter -eq 0 ]; then
-            printf "%9s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE"; # print
+            if [ $loop -eq 1 ]; 
+            then
+                printf "%-6s %9s %9s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE" "TXTOT" "RXTOT";  
+            else
+                printf "%-6s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE"; 
+            fi  
+            
         fi  
         
         for (( i=1; i < $N; i++ )); do
@@ -202,11 +242,21 @@
             t_rate=$(echo "${data[$i]}" | awk '{print $4;}');
             r_rate=$(echo "${data[$i]}" | awk '{print $5;}');
 
-            printf "%9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate;
+            if [ $loop -eq 1 ]; 
+            then
+                tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
+                tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                printf "%-6s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tot_tx $tot_rx;
+            else
+                printf "%-6s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate;
+            fi  
+            
         done
+        printf "\n";
 
         # define if its to continue looping or not
         looping=$loop;
         iter=$(($iter+1));
+
     done
 #
