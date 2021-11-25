@@ -59,18 +59,32 @@
 
 # main
 
+    # get sleep time
     sleep_time=${!#};
 
+    # set default variables
     byte_div=1;
     reversed=0;
     order="alpha";
-    
+    max=10;
+    getMax=0;
+
+    # process options
     for op in "$@"; do
+
+        if [ $getMax -eq 1 ]; then
+            max=$op;
+            getMax=0;   
+            continue;
+        fi 
+
         case $op in
+            -p)
+                getMax=1;
+                ;;
             -k)
                 byte_div=1000
                 ;;
-
             -m)
                 byte_div=1000000
                 ;;
@@ -80,14 +94,12 @@
             -r)
                 order="r"
                 ;;
-
             -t)
                 order="t"
                 ;;  
             -R)
                 order="r"
                 ;;
-
             -T)
                 order="t"
                 ;;        
@@ -99,7 +111,7 @@
     echo "reversed = $reversed";
 
 
-    # get inicial array and organize it in: i_data[] = interface rx tx
+    # get inicial array and organize it in: i_data[] = interface_name rx tx
     IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
     IFS=$'\n' read -r -d '' -a i_RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
     IFS=$'\n' read -r -d '' -a f_TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
@@ -113,7 +125,7 @@
     # wait given seconds
     sleep $sleep_time
 
-    # get final array and organize it in: i_data[] = interface rx tx
+    # get final array and organize it in: i_data[] = interface_name rx tx
     IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
     IFS=$'\n' read -r -d '' -a i_RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
     IFS=$'\n' read -r -d '' -a f_TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
@@ -126,7 +138,7 @@
 
 
 
-    #get
+    # get wanted data
     for ((i=1; i < $N; i++ ))
     do  
         # get innterface
@@ -152,10 +164,8 @@
         data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate";
         
     done
-
-    # Base Sort
-    
-    
+ 
+    # Sort
     case $order in
         r)
             SortRx
@@ -168,7 +178,10 @@
     then 
         Reverse
     fi
-    
+
+    if [ $N -gt $max ]; then
+        N=$(($max+1));
+    fi   
 
     #print 
     printf "%9s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE"; # print
