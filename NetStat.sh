@@ -28,6 +28,7 @@
 
 # main
 
+    sleep_time=${!#};
 
     # get inicial array and organize it in: i_data[] = interface rx tx
     IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
@@ -40,7 +41,7 @@
     done    
     
     # wait given seconds
-    sleep $1
+    sleep $sleep_time
 
     # get final array and organize it in: i_data[] = interface rx tx
     IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
@@ -66,13 +67,13 @@
         i_rx=$(echo "${i_data[$i]}" | awk '{print $2;}');
         rx=$(echo "${data[$i]}" | awk '{print $2;}');
         r_Dif=($(($rx-$i_rx))); 
-        r_Rate=($(($r_Dif/$1)));
+        r_Rate=($(($r_Dif/$sleep_time)));
 
         # t
         i_tx=$(echo "${i_data[$i]}" | awk '{print $3;}');
         tx=$(echo "${data[$i]}" | awk '{print $3;}');
         t_Dif=($(($tx-$i_tx))); 
-        t_Rate=($(($t_Dif/$1)));
+        t_Rate=($(($t_Dif/$sleep_time)));
 
         # return changed and added values to the array  
         data[$i]="$interface $t_Dif $r_Dif $t_Rate $r_Rate";
