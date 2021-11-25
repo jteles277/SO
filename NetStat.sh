@@ -64,13 +64,13 @@
     sleep_time=${!#};
 
     # set default variables
-    byte_div=1;
-    reversed=0;
-    order="alpha";
-    max=10;
-    getMax=0;
-    loop=0;
-    looping=1;
+    byte_div=1;         # variable that will help show desirable size
+    reversed=0;         # boolean to know if is to reverse
+    order="alpha";      # type of sort to be used
+    max=10;             # max number of interfaces to be shown
+    getMax=0;           # boolean to help manage last one
+    loop=0;             # boolean to declare if is to loop or not
+    looping=1;          # boolean to show the state(if is looping or not)
 
     # process options
     for op in "$@"; do
@@ -142,9 +142,7 @@
         IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
         for ((i=1; i < $N; i++ ))
         do
-            
             data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 
-            
         done    
         
          
@@ -218,7 +216,7 @@
             N=$(($max+1));
         fi   
 
-        #print 
+        # print Label
         if [ $iter -eq 0 ]; then
             if [ $loop -eq 1 ]; 
             then
@@ -229,6 +227,7 @@
             
         fi  
         
+        # print Information
         for (( i=1; i < $N; i++ )); do
             int=$(echo "${data[$i]}" | awk '{print $1;}');
             tx=$(echo "${data[$i]}" | awk '{print $2;}');
