@@ -15,9 +15,9 @@
     }
     Reverse(){
         # reverse order
-        for (( i = 1; $i <= $(($N - $i)); $((i = $i + 1)) ))
+        for (( i = 0; $i <= $(($N - $i - 1)); $((i = $i + 1)) ))
         do
-	        f=$(($N - $i));
+	        f=$(($N - $i - 1));
             
             temp=${data[$f]};
             data[$f]=${data[$i]};
@@ -27,7 +27,7 @@
     }
     SortRx() {
         # basic selection sort  
-        for (( i = 1; $i < $(($N-1)); $((i = $i + 1)) ))
+        for (( i = 0; $i < $(($N-1)); $((i = $i + 1)) ))
         do
             for (( e = $(($i+1)); $e < $N; $((e = $e + 1)) ))
             do
@@ -48,7 +48,7 @@
     }
     SortTx() {
         # basic selection sort  
-        for (( i = 1; $i < $(($N-1)); $((i = $i + 1)) ))
+        for (( i = 0; $i < $(($N-1)); $((i = $i + 1)) ))
         do
             for (( e = $(($i+1)); $e < $N; $((e = $e + 1)) ))
             do
@@ -142,7 +142,7 @@
         IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
         IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
         N=${#interfaces[@]};
-        for ((i=1; i < $N; i++ ))
+        for ((i=0; i < $N; i++ ))
         do
             i_data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}";  
         done    
@@ -154,7 +154,7 @@
         IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
         IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
         IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
-        for ((i=1; i < $N; i++ ))
+        for ((i=0; i < $N; i++ ))
         do
             data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 
         done    
@@ -163,7 +163,7 @@
 
 
         # get wanted data
-        for ((i=1; i < $N; i++ ))
+        for ((i=0; i < $N; i++ ))
         do  
             # get innterface
             interface=$(echo "${i_data[$i]}" | awk '{print $1;}');
@@ -250,7 +250,7 @@
 
 
         # print Information
-        for (( i=1; i < $N; i++ )); do
+        for (( i=0; i < $N; i++ )); do
             int=$(echo "${data[$i]}" | awk '{print $1;}');
             tx=$(echo "${data[$i]}" | awk '{print $2;}');
             rx=$(echo "${data[$i]}" | awk '{print $3;}');
