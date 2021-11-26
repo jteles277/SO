@@ -6,7 +6,6 @@
         for (( i=1; i < $N; i++ ))
         do
             interface_name=$(echo "${data[$i]}" | awk '{print $1;}'); 
-            echo $regex
             if [[ ${interface_name} =~ ^$regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
                 echo $interface_name                     # regex e exatamente igual   
             fi                                           #precisa de uma nova solução 
