@@ -198,11 +198,11 @@
                     tot_rx[$i]=$((tot_rx[$i]+$r_Gap));
                 fi
                 # return changed and added values to the array  
-                data[$i]="$interface $t_Gap $r_Gap 0 0 ${tot_tx[$i]} ${tot_rx[$i]}"; 
+                data[$i]="$interface $t_Gap $r_Gap ${tot_tx[$i]} ${tot_rx[$i]}"; 
                 
             else
                 # return changed and added values to the array  
-                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate";
+                data[$i]="$interface $t_Gap $r_Gap ";
             fi  
 
            
@@ -262,9 +262,9 @@
 
             if [ $loop -eq 1 ]; 
             then
-                tmp_tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
+                tmp_tot_tx=$(echo "${data[$i]}" | awk '{print $4;}');
                 tmp_tot_tx=$((tmp_tot_tx/byte_div));
-                tmp_tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                tmp_tot_rx=$(echo "${data[$i]}" | awk '{print $5;}');
                 tmp_tot_rx=$((tmp_tot_rx/byte_div));
 
                 printf "%-6s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tmp_tot_tx $tmp_tot_rx;
