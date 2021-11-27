@@ -1,12 +1,23 @@
 #!/bin/bash
 
-byte_div=1000;
-r_Gap=1280;
-echo $r_Gap;
-echo "$r_Gap + $byte_div = ";
-r_Gap=$(($r_Gap+$byte_div));
-echo $r_Gap;
+country="$1"
+modified=${country::-1}
+var2="${modified}*"
+var3="*${country:1}"
+var4="*${modified:1}*"
+if  [ "$country" = "$var2" ] && [ "$country" != "$var4" ]; then
+    echo $modified # "port"
+    echo mod1
+elif  [ "$country" = "$var3" ] && [ "$country" != "$var4" ]; then
+    echo $country
+    echo mod2
+elif  [ "$country" = "$var4" ]; then
+    echo $country
+    echo mod3
+fi
 
 
+divisao + 0.5 e dps round
 
-echo $1 $2
+fazer a conta em bytes sempre 
+so dar round no print

@@ -6,7 +6,7 @@
         for (( i=1; i < $N; i++ ))
         do
             interface_name=$(echo "${data[$i]}" | awk '{print $1;}'); 
-            if [[ ${interface_name} =~ ^$regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
+            if [[ ${interface_name} =~ ^$Regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
                 echo $interface_name                     # regex e exatamente igual   
             fi                                           #precisa de uma nova solução 
 
@@ -71,8 +71,16 @@
 
 # main
 
+    #check if sleep time is an integer
+
+    if ! [[ ${@: -1} =~ ^[0-9]+$ ]] ; then
+        echo "error" 
+        echo "Last argument should be integer"    #error, last argument should be integer
+        exit 1                                    #error code
+    fi
+
     # get sleep time
-    sleep_time=${!#};
+     sleep_time=${!#};
 
     # set default variables
     byte_div=1;         # variable that will help show desirable size
@@ -82,19 +90,29 @@
     getMax=0;           # boolean to help manage last one
     loop=0;             # boolean to declare if is to loop or not
     looping=1;          # boolean to show the state(if is looping or not)
-    regex=""
+    getRegex=0;         # boolean to help manage regex
+    Regex="";
     # process options
     for op in "$@"; do
         #get penultimate argument and checks if is diferent from other cases
-      if [[ "$op" == "${@:(-2):1}" ]] && [[ "$op" != "-"* ]] && [ $getMax -ne 1 ]; then
-           regex="$op"
-      fi
-        if [ $getMax -eq 1 ]; then
+        if [ $getMax -eq 1 ]; then         
+            if ! [[ $op =~ ^[0-9]+$ ]] ; then
+                echo "error" 
+                echo "Argument after -p should be integer"    #error, last argument should be integer
+                exit 2                                        #error code
+            fi  
             max=$op;
             getMax=0;   
             continue;
-        fi 
+        elif [ $getRegex -eq 1 ]; then
+            Regex="$op"
+            getRegex=0
+            continue;
+        fi
         case $op in
+            -c)
+                getRegex=1;
+                ;;
             -l)
                 loop=1;
                 ;;
@@ -228,10 +246,10 @@
         fi
 
         if [ $N -gt $max ]; then
-            N=$(($max+1));
+            N=$(($max));
         fi   
 
-        if [ ! -z "$regex" ]; then
+        if [ ! -z "$Regex" ]; then
             #Regex will remove the ones that dont match regex pattern
             Regex
         fi

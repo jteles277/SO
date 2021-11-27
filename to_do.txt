@@ -1,0 +1,20 @@
+
+
+-----------------------------------------------------------
+mandar mail ao stor a perguntar como funciona o REGEX
+
+-----------------------------------------------------------
+code stuff
+
+solved--	se ultimo input não for numero dar erro
+solved--	se input dps de -p n for interger dar erro
+solved--	input -p esta a dar uma interface a mais
+	acabar o regex
+	round Bytes para unidades mas so quando  for a dar print 
+	make all the sums in bytes
+
+------------------------------------------------------------
+
+Relatorio 
+	still needs to be made
+	fazer os dois deve ser o mais ideal
