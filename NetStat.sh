@@ -188,21 +188,17 @@
             # get innterface
             interface=$(echo "${i_data[$i]}" | awk '{print $1;}');
 
-            # rx/tx = get rx/tx from array  |  Gap = rFinal - rInicial  |  rate  = Gap/#secs
+            # rx/tx = get rx/tx from array  |  Gap = rFinal - rInicial 
 
             # r
             i_rx=$(echo "${i_data[$i]}" | awk '{print $2;}');
             rx=$(echo "${data[$i]}" | awk '{print $2;}');
-            r_Gap=($(($rx-$i_rx)));
-            r_Gap=$((r_Gap/byte_div));
-            r_Rate=$(bc <<<"scale=1;$r_Gap/$sleep_time");
+            r_Gap=($(($rx-$i_rx))); 
 
             # t
             i_tx=$(echo "${i_data[$i]}" | awk '{print $3;}');
             tx=$(echo "${data[$i]}" | awk '{print $3;}');
-            t_Gap=($(($tx-$i_tx))); 
-            t_Gap=$((t_Gap/byte_div));
-            t_Rate=$(bc <<<"scale=1;$t_Gap/$sleep_time");
+            t_Gap=($(($tx-$i_tx)));  
 
             # depending if is looping we have more information
             if [ $loop -eq 1 ]; 
@@ -217,14 +213,13 @@
                      
                     tot_tx[$i]=$((tot_tx[$i]+$t_Gap)); 
                     tot_rx[$i]=$((tot_rx[$i]+$r_Gap));
-                    echo "$i - ${tot_rx[$i]}";
                 fi
                 # return changed and added values to the array  
-                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate ${tot_tx[$i]} ${tot_rx[$i]}"; 
+                data[$i]="$interface $t_Gap $r_Gap ${tot_tx[$i]} ${tot_rx[$i]}"; 
                 
             else
                 # return changed and added values to the array  
-                data[$i]="$interface $t_Gap $r_Gap $t_Rate $r_Rate";
+                data[$i]="$interface $t_Gap $r_Gap ";
             fi  
 
            
@@ -271,16 +266,24 @@
 
         # print Information
         for (( i=0; i < $N; i++ )); do
-            int=$(echo "${data[$i]}" | awk '{print $1;}');
+            int=$(echo "${data[$i]}" | awk '{print $1;}'); 
+
             tx=$(echo "${data[$i]}" | awk '{print $2;}');
+            t_rate=$(bc <<<"scale=1;($tx/$sleep_time)/$byte_div");
+            tx=$((tx/byte_div));
+
             rx=$(echo "${data[$i]}" | awk '{print $3;}');
-            t_rate=$(echo "${data[$i]}" | awk '{print $4;}');
-            r_rate=$(echo "${data[$i]}" | awk '{print $5;}');
+            r_rate=$(bc <<<"scale=1;($rx/$sleep_time)/$byte_div");
+            rx=$((rx/byte_div));
+            
 
             if [ $loop -eq 1 ]; 
             then
-                tmp_tot_tx=$(echo "${data[$i]}" | awk '{print $6;}');
-                tmp_tot_rx=$(echo "${data[$i]}" | awk '{print $7;}');
+                tmp_tot_tx=$(echo "${data[$i]}" | awk '{print $4;}');
+                tmp_tot_tx=$((tmp_tot_tx/byte_div));
+                tmp_tot_rx=$(echo "${data[$i]}" | awk '{print $5;}');
+                tmp_tot_rx=$((tmp_tot_rx/byte_div));
+
                 printf "%-6s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tmp_tot_tx $tmp_tot_rx;
             else
                 printf "%-6s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate;
