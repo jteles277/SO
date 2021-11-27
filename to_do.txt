@@ -11,8 +11,8 @@ solved--	se input dps de -p n for interger dar erro
 solved--	input -p esta a dar uma interface a mais
 solved--	se o input n for de qualquer tipo dos inputs então dar erro
 	acabar o regex
-	round Bytes para unidades mas so quando  for a dar print 
-	make all the sums in bytes
+solved--	round Bytes para unidades mas so quando  for a dar print 
+solved--	make all the sums in bytes
 
 ------------------------------------------------------------
 

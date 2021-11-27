@@ -1,4 +1,17 @@
 Trabalho Realizado por João Teles Correia e Rafael Remígio Coelho.
 
+Neste Relatório explicaremos o processo de construção do programa netifstat.sh.
+
+Main 
+    como corremos os argumentos para selecionar as opções do user
+    Como Organizamos os dados recebidos a partir do comando "ifconfig -a" 
+    como fazemos a subtração dos dois codigos recebidos
+    como printamos a informação
 
 
+Functions
+    Reverse
+    SortRX e SortTX
+    Regex
+    
+como funciona a função de loop
