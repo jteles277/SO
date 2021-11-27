@@ -3,14 +3,28 @@
 # functions
     Regex(){
         #Runs trough all of the interfaces and checks wich ones dont contain the regex in question
-        for (( i=1; i < $N; i++ ))
+        for (( i=0; i < $N; i++ ))
         do
             interface_name=$(echo "${data[$i]}" | awk '{print $1;}'); 
-            if [[ ${interface_name} =~ ^$Regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
-                echo $interface_name                     # regex e exatamente igual   
-            fi                                           #precisa de uma nova solução 
-
+            if ! [[ ${interface_name} =~ ^$Regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
+                                                           # regex e exatamente igual   #precisa de uma nova solução 
+                unset 'data[i]'     #deletes the intefaces that dont match the REGEX
+            fi                                          
         done
+
+        #The code above unfortunatly creates array indexes that just contain nothing in them
+        #this way i have to reset the array parsing it to another array
+        #i think this is dumb but i see no way of doing it without changing the rest of the code
+
+        for i in "${!data[@]}"; do
+        new_array+=( "${data[i]}" )
+        done
+        data=("${new_array[@]}")
+        unset new_array
+        
+        #reset the number of interfaces
+        N=${#data[@]};
+
     }
     Reverse(){
         # reverse order
@@ -91,10 +105,17 @@
     loop=0;             # boolean to declare if is to loop or not
     looping=1;          # boolean to show the state(if is looping or not)
     getRegex=0;         # boolean to help manage regex
-    Regex="";
+    Regex="";           
+    iter=0:             #iterator to help manage the number of argumens passed
     # process options
     for op in "$@"; do
         #get penultimate argument and checks if is diferent from other cases
+        i=$(($i + 1))
+        if [ $i -eq $# ]; then
+
+        continue;
+
+        fi
         if [ $getMax -eq 1 ]; then         
             if ! [[ $op =~ ^[0-9]+$ ]] ; then
                 echo "error" 
@@ -112,35 +133,53 @@
         case $op in
             -c)
                 getRegex=1;
+                continue
                 ;;
             -l)
                 loop=1;
+                continue
                 ;;
             -p)
                 getMax=1;
+                continue
                 ;;
             -k)
                 byte_div=1000
+                continue
                 ;;
             -m)
                 byte_div=1000000
+                continue
                 ;;
             -v)
                 reversed=1
+                continue
                 ;;
             -r)
                 order="r"
+                continue
                 ;;
             -t)
                 order="t"
+                continue
                 ;;  
             -R)
                 order="r"
+                continue
                 ;;
             -T)
                 order="t"
+                continue
                 ;;  
         esac
+
+
+        #if it reaches here then the argument passed is not valid
+
+        echo "error" 
+        echo "Argument $op is invalid"    #error, invalid argument
+        exit 3                                       #error code
+
     done
 
     
