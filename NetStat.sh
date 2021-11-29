@@ -2,25 +2,17 @@
 
 # functions
     Regex(){
-        #Runs trough all of the interfaces and checks wich ones dont contain the regex in question
+        #Runs trough all of the interfaces and checks wich ones contain the regex in question
         for (( i=0; i < $N; i++ ))
         do
             interface_name=$(echo "${data[$i]}" | awk '{print $1;}'); 
-            if ! [[ ${interface_name} =~ ^$Regex$ ]]; then # bruno disse que isto funcionava mas so funciona quando o 
-                                                           # regex e exatamente igual   #precisa de uma nova solução 
-                unset 'data[i]'     #deletes the intefaces that dont match the REGEX
+            if [[ ${interface_name} =~ ^$Regex$ ]]; then 
+                new_array+=( "${data[i]}" )                  # adds the interface in a intermidiate array
             fi                                          
         done
 
-        #The code above unfortunatly creates array indexes that just contain nothing in them
-        #this way i have to reset the array parsing it to another array
-        #i think this is dumb but i see no way of doing it without changing the rest of the code
-
-        for i in "${!data[@]}"; do
-        new_array+=( "${data[i]}" )
-        done
-        data=("${new_array[@]}")
-        unset new_array
+        data=("${new_array[@]}")        # reset the array data
+        unset new_array                 #unsets the array since it has no more use
         
         #reset the number of interfaces
         N=${#data[@]};
@@ -143,6 +135,10 @@
                 getMax=1;
                 continue
                 ;;
+            -b)
+                byte_div=1;
+                continue
+                ;;
             -k)
                 byte_div=1000
                 continue
@@ -194,9 +190,9 @@
     while [ $looping -eq 1 ]; do 
 
         # get inicial array and organize it in: i_data[] = interface_name rx tx
-        IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
-        IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
-        IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
+        IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d :  )
+        IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' )  
+        IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' )
         N=${#interfaces[@]};
         for ((i=0; i < $N; i++ ))
         do
@@ -207,9 +203,9 @@
         sleep $sleep_time
 
         # get final array and organize it in: i_data[] = interface_name rx tx
-        IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d : && printf '\0' )
-        IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' | tr -d : && printf '\0' )  
-        IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' | tr -d : && printf '\0' )
+        IFS=$'\n' read -r -d '' -a interfaces < <( ifconfig -a | grep ": " | awk '{print $1}' | tr -d :  )
+        IFS=$'\n' read -r -d '' -a RXs < <( ifconfig -a | grep "RX packets" | awk '{print $5}' )  
+        IFS=$'\n' read -r -d '' -a TXs < <( ifconfig -a | grep "TX packets" | awk '{print $5}' )
         for ((i=0; i < $N; i++ ))
         do
             data[$i]="${interfaces[$i]} ${RXs[$i]} ${TXs[$i]}"; 

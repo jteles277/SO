@@ -10,12 +10,12 @@ solved--	se ultimo input não for numero dar erro
 solved--	se input dps de -p n for interger dar erro
 solved--	input -p esta a dar uma interface a mais
 solved--	se o input n for de qualquer tipo dos inputs então dar erro
-	acabar o regex
+solved--	acabar o regex
 solved--	round Bytes para unidades mas so quando  for a dar print 
 solved--	make all the sums in bytes
 
 ------------------------------------------------------------
 
 Relatorio 
-	still needs to be made
-	fazer os dois deve ser o mais ideal
+solved--	still needs to be made
+	embelezar o relatorio
