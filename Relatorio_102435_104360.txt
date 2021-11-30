@@ -1,6 +1,6 @@
-Trabalho Realizado por João Teles Correia e Rafael Remígio Coelho.
+Trabalho realizado por João Gomes Teles Correia e Rafael Remígio Ferreira Lixa Cardoso Coelho.
 
-Neste Relatório explicaremos o processo de construção do programa netifstat.sh. Separamos a explicação do programa em 3 partes:
+Neste relatório explicaremos o processo de construção do programa netifstat.sh. Separamos a explicação do programa em 3 partes:
 	Main (que não é necessariamente uma função mas sim a parte central do programa)
 	Looping (explica como foi implementada a opção -l passada como argumento)
 	Functions (explica como foi implementada as funções necessárias)
