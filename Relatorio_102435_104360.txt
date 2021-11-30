@@ -1,61 +1,65 @@
 Trabalho Realizado por João Teles Correia e Rafael Remígio Coelho.
 
-Neste Relatório explicaremos o processo de construção do programa netifstat.sh.
+Neste Relatório explicaremos o processo de construção do programa netifstat.sh. Separamos a explicação do programa em 3 partes:
+	Main (que não é necessariamente uma função mas sim a parte central do programa)
+	Looping (explica como foi implementada a opção -l passada como argumento)
+	Functions (explica como foi implementada as funções necessárias)
 
-Main     
-    Como Organizamos os dados recebidos a partir do comando "ifconfig -a":
-
-        criamos 3 arrays um para o tx rx e interfaces
-        a partir do command ifconfig -a usando grep, awk, tr -d (deleta o : )
-        Organizamos um array (i_data) com 3 colunas (kinda like a matriz) e com linhas iguais ao numero de interfaces)
+Main
+	Recebemos a informação necessária a partir do comando "ifconfig -a" e da seguinte forma organizamos os dados recebidos:
+        Criamos 3 arrays um para a informação tx outro para a informação rx e outra para o nome das interfaces a partir do command ifconfig -a usando grep, awk e tr para selecionar e eliminar as partes recebidas;
+        Organizamos um array "i_data" com 3 colunas divididas por um espaço (como uma matriz de n x 3)(e com n igual ao número de interfaces existentes) de modo a serem facilmente percorridas com o awk e guardadas num array com um so String que ajuda nas funções de sorting e desde modo so precisamos de um unico array de informação
         exemplo:
             eth0 0 0
             lo 0 0
             wifi0 0 0
 
-        dps usamos o sleep 
-        fazemos exatamente a mesma coisa e guardamos tudo noutro array (data)
+    Depois de criarmos o array "i_data", usamos o comando sleep
+
+    Recebemos a informação de exatamente a mesma forma anterior neste caso para o array "data"
         exemplo:
             eth0 2 10
             lo 6 5
             wifi0 7 3
 
-    como fazemos a subtração dos dois codigos recebidos
-
-        Fazer a subtração entre os valores dos arrays e salvamos na mesma variavel (data)
+    Depois de termos os dois arrays fazemos a subtração dos valores dos RX e TX arrays e salvamos na variavel (data) tendo deste modo toda a informação necessaria para escrever ou fazer quaiqueres calculos ou sortings intermedios;
 
 
-    como corremos os argumentos para selecionar as opções do user
-        corremos um for loop que percorre todos os argumentos e usamos um switch casa para indentificalos
-            -c  muda o valor da variavel boleana de modo que na proxima iteração leio o Regex intruduzido pelo User
-            -p  muda o valor da variavel boleana de modo que na proxima iteração leio o numero de interfaces a mostrar
-                so efectuado apos o sorting para que as interfaces sejam escolhidas por ordem alfabetica(default) ou pela ordem escolhida pelo User
+    Argumentos passados pelo Utilizador:
+        Iteramos todos os argumentos e usamos um switch case para identificar os seguintes argumentos dando erro se for dado como input algo aqui não especificado
+            -c  muda o valor da variavel boleana de modo que na proxima iteração leia o Regex intruduzido pelo Utilizador
+            -p  muda o valor da variavel boleana de modo que na proxima iteração leia o número de interfaces a mostrar so efectuando o sorting depois para que as interfaces sejam escolhidas por ordem alfabetica(default) ou pela ordem escolhida pelo Utilizador
             -b/k/m
-                O b o k e o m são opçoes que mudam o byte_divisor, uma variavel que usamos para para dividir no final para printar a data 
-                na forma desejada
-            -r  Seleciona o uso da função de sorting SortRX atravez de uma variavel boleana explicada abaixo 
-            -t  Seleciona o uso da função de sorting SortTX atravez de uma variavel boleana explicada abaixo 
-            -R  Seleciona o uso da função de sorting SortRX atravez de uma variavel boleana explicada abaixo pois caso a interface tenha o Rx maior tbm vai ter o maior R_Rate
-            -T  Seleciona o uso da função de sorting SortTX atravez de uma variavel boleana explicada abaixo pois caso a interface tenha o Tx maior tbm vai ter o maior T_Rate            
-            -v  Seleciona o uso da função de sorting Reverse atravez de uma variavel boleana explicada abaixo 
-            -l  Seta a variavel boleana para ser feito o loop
+                O -b o -k e o -m são opções que mudam o byte_divisor, uma variavel que usamos para para dividir os valores de RX e TX (e se tal for o caso TX_rate e RX_rate) no final para escrever a data na forma desejada pelo Utilizador
+            -r  Seleciona o uso da função de sorting SortRX (explicada abaixo) atravez de uma variavel boleana  
+            -t  Seleciona o uso da função de sorting SortTX (explicada abaixo) atravez de uma variavel boleana  
+            -R  Seleciona o uso da função de sorting SortRX (explicada abaixo) atravez de uma variavel boleana pois caso a interface tenha o Rx maior tbm vai ter o maior R_Rate
+            -T  Seleciona o uso da função de sorting SortTX (explicada abaixo) atravez de uma variavel boleana pois caso a interface tenha o Tx maior tbm vai ter o maior T_Rate            
+            -v  Seleciona o uso da função de sorting Reverse (explicada abaixo) atravez de uma variavel boleana 
+            -l  Muda o valor da variavel boleana looping (explicado abaixo com mais detalhe)
 
 
-    Printar a tabela
-        Printar o cabeçalho 
-            dependendo do valor da variavel loop, o cabeçalho será
+    Escrever a tabela de valores desejados:
+        Escrever o cabeçalho:
+            Dependendo do valor da variavel looping, o cabeçalho será
                 NETIF         TX        RX     TRATE     RRATE
                 ou então em caso de loop
                 NETIF         TX        RX     TRATE     RRATE     TXTOT     RXTOT
-        Printar os valores 
-            Iteramos pela data criando a variavel TX_rate e RX_rate dividindo o tx e o rx pelo sleep time;
-            Dividimos tudo pelo byte_divisor que será diferente dependendo da opção Selecionada pelo User
-            Depois printamos a informação
-            exemplo
-                eth0           0         0         0         0
-                eth1           0         0         0         0
+        Escrever os valores:
+            Iteramos pela data criando a variavel TX_rate e RX_rate dividindo o tx e o rx pelo tempo de espera ou seja o nosso sleep_time;
+            Dividimos os valores TX ou RX e as subsquentes somas e rates pelo byte_divisor que será diferente dependendo da opção selecionada pelo Utilizador
+            Depois escrevemos a informação no terminal
+            Exemplo:
+                eth0      123456     23456   12345.6    2345.6
+                lo           456       234      45.6      23.4
 
+            
+            (ou então no caso de loop)
 
+                eth0      123456     23456   12345.6    2345.6    123456     23456
+                lo           456       234      45.6      23.4       456       234
+
+// estou aqui, preciso acabar o resto
 Looping 
         Caso a variavel boleana loop esteja ativa o codigo da main será iterado a parte da selação e opçoes que é so feita uma vez
         Serão usados outros 2 arrays tot_tx e tot_rx cada elemento corresponde a uma interface ordenada de forma alfabetica sendo somados a ele mesmo da iteração anterior,
