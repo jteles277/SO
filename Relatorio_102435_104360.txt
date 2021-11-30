@@ -7,8 +7,8 @@ Neste Relatório explicaremos o processo de construção do programa netifstat.s
 
 Main
 	Recebemos a informação necessária a partir do comando "ifconfig -a" e da seguinte forma organizamos os dados recebidos:
-        Criamos 3 arrays um para a informação tx outro para a informação rx e outra para o nome das interfaces a partir do command ifconfig -a usando grep, awk e tr para selecionar e eliminar as partes recebidas;
-        Organizamos um array "i_data" com 3 colunas divididas por um espaço (como uma matriz de n x 3)(e com n igual ao número de interfaces existentes) de modo a serem facilmente percorridas com o awk e guardadas num array com um so String que ajuda nas funções de sorting e desde modo so precisamos de um unico array de informação
+        Criamos 3 arrays um para a informação tx outro para a informação rx e outra para o nome das interfaces a partir do comando ifconfig -a usando grep, awk e tr para selecionar e eliminar as partes recebidas;
+        Organizamos um array "i_data" com 3 colunas divididas por um espaço (como uma matriz de n x 3)(e com n igual ao número de interfaces existentes) de modo a serem facilmente percorridas com o awk e guardadas num array com um so String que ajuda nas funções de sorting e desde modo só precisamos de um único array de informação
         exemplo:
             eth0 0 0
             lo 0 0
@@ -22,32 +22,32 @@ Main
             lo 6 5
             wifi0 7 3
 
-    Depois de termos os dois arrays fazemos a subtração dos valores dos RX e TX arrays e salvamos na variavel (data) tendo deste modo toda a informação necessaria para escrever ou fazer quaiqueres calculos ou sortings intermedios;
+    Depois de termos os dois arrays fazemos a subtração dos valores dos RX e TX arrays e salvamos na variável (data) tendo deste modo toda a informação necessária para escrever ou fazer quaisquer cálculos ou sortings intermédios;
 
 
     Argumentos passados pelo Utilizador:
         Iteramos todos os argumentos e usamos um switch case para identificar os seguintes argumentos dando erro se for dado como input algo aqui não especificado
-            -c  muda o valor da variavel boleana de modo que na proxima iteração leia o Regex intruduzido pelo Utilizador
-            -p  muda o valor da variavel boleana de modo que na proxima iteração leia o número de interfaces a mostrar so efectuando o sorting depois para que as interfaces sejam escolhidas por ordem alfabetica(default) ou pela ordem escolhida pelo Utilizador
+            -c  muda o valor da variável booleana de modo que na próxima iteração leia o Regex introduzido pelo Utilizador
+            -p  muda o valor da variável booleana de modo que na próxima iteração leia o número de interfaces a mostrar só efetuando o sorting depois para que as interfaces sejam escolhidas por ordem alfabética(default) ou pela ordem escolhida pelo Utilizador
             -b/k/m
-                O -b o -k e o -m são opções que mudam o byte_divisor, uma variavel que usamos para para dividir os valores de RX e TX (e se tal for o caso TX_rate e RX_rate) no final para escrever a data na forma desejada pelo Utilizador
-            -r  Seleciona o uso da função de sorting SortRX (explicada abaixo) atravez de uma variavel boleana  
-            -t  Seleciona o uso da função de sorting SortTX (explicada abaixo) atravez de uma variavel boleana  
-            -R  Seleciona o uso da função de sorting SortRX (explicada abaixo) atravez de uma variavel boleana pois caso a interface tenha o Rx maior tbm vai ter o maior R_Rate
-            -T  Seleciona o uso da função de sorting SortTX (explicada abaixo) atravez de uma variavel boleana pois caso a interface tenha o Tx maior tbm vai ter o maior T_Rate            
-            -v  Seleciona o uso da função de sorting Reverse (explicada abaixo) atravez de uma variavel boleana 
-            -l  Muda o valor da variavel boleana looping (explicado abaixo com mais detalhe)
+                O -b o -k e o -m são opções que mudam o byte_divisor, uma variável que usamos para dividir os valores de RX e TX (e se tal for o caso TX_rate e RX_rate) no final para escrever a data na forma desejada pelo Utilizador
+            -r  Seleciona o uso da função de sorting SortRX (explicada abaixo) através de uma variável booleana  
+            -t  Seleciona o uso da função de sorting SortTX (explicada abaixo) através de uma variável booleana  
+            -R  Seleciona o uso da função de sorting SortRX (explicada abaixo) através de uma variável booleana pois caso a interface tenha o Rx maior também vai ter o maior R_Rate
+            -T  Seleciona o uso da função de sorting SortTX (explicada abaixo) através de uma variável booleana pois caso a interface tenha o Tx maior também vai ter o maior T_Rate            
+            -v  Seleciona o uso da função de sorting Reverse (explicada abaixo) através de uma variável booleana 
+            -l  Muda o valor da variável booleana looping (explicado abaixo com mais detalhe)
 
 
     Escrever a tabela de valores desejados:
         Escrever o cabeçalho:
-            Dependendo do valor da variavel looping, o cabeçalho será
+            Dependendo do valor da variável looping, o cabeçalho será
                 NETIF         TX        RX     TRATE     RRATE
                 ou então em caso de loop
                 NETIF         TX        RX     TRATE     RRATE     TXTOT     RXTOT
         Escrever os valores:
-            Iteramos pela data criando a variavel TX_rate e RX_rate dividindo o tx e o rx pelo tempo de espera ou seja o nosso sleep_time;
-            Dividimos os valores TX ou RX e as subsquentes somas e rates pelo byte_divisor que será diferente dependendo da opção selecionada pelo Utilizador
+            Iteramos pela data criando a variavel TX_rate e RX_rate dividindo o tx e o rx pelo tempo de espera, ou seja, o nosso sleep_time;
+            Dividimos os valores TX ou RX e as subsequentes somas e rates pelo byte_divisor que será diferente dependendo da opção selecionada pelo Utilizador
             Depois escrevemos a informação no terminal
             Exemplo:
                 eth0      123456     23456   12345.6    2345.6
@@ -61,8 +61,8 @@ Main
 
 
 Looping 
-        Caso a variavel boleana looping seja verdadeira o parte do codigo de recolhimento de data e de escrita do codigo da main será iterado com um while loop.
-        Serão também queriados dois outros arrays tot_tx e tot_rx onde cada elemento corresponde a uma interface ordenada de forma alfabetica sendo somados a ele mesmo da iteração anterior, e depois são inseridos no array sendo depois escritos na nova formatação da tabela
+        Caso a variável booleana looping seja verdadeira o parte do código de recolhimento de data e de escrita do código da main será iterado com um while loop.
+        Serão também criados dois outros arrays tot_tx e tot_rx onde cada elemento corresponde a uma interface ordenada de forma alfabética sendo somados a ele mesmo da iteração anterior, e depois são inseridos no array sendo depois escritos na nova formatação da tabela
             array data:
                 eth0 2 10 20 3
                 lo 6 5 6 4
@@ -73,14 +73,12 @@ Looping
                 eth0           0         0         0         0         0         0
                 wifi0          0         0         0         0         0         0 
 
-// estou aqui
+
 Funções:
     SortRX e SortTX
-        Usamos um algoritmo de ordenação por seleção para organizarmos o array data dos seguites modos pedido pelo utilizador atravez da função TX ou RX.
+        Usamos um algoritmo de ordenação por seleção para organizarmos o array data dos seguintes modos pedido pelo utilizador através da função TX ou RX.
         O algoritmo de ordenação por seleção funciona comparando cada elemento i do array com os elementos seguintes posicionando o mais alto no index acima ate acabar o array.
     Reverse
-        Função que inverte o array trocando os valores dos índices com a mesma distancia ao centro.
+        Função que inverte o array trocando os valores dos índices com a mesma distância ao centro.
     Regex
-        A função itera por todas as interfaces da data e se o nome da interface corresponder à Expreção Regular desejada esta será adcionada a um array intermedio que depois será passado como o array data;
-
-        
+        A função itera por todas as interfaces da data e se o nome da interface corresponder à Expressão Regular desejada esta será adicionada a um array intermedio que depois será passado como o array data;
