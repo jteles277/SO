@@ -1,0 +1,8 @@
+$./NetStat.sh -b 10
+NETIF         TX        RX     TRATE     RRATE
+bond0          0         0         0         0
+dummy0         0         0         0         0
+eth0           0       176         0      17.6
+lo             0         0         0         0
+sit0           0         0         0         0
+tunl0          0         0         0         0
