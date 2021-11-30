@@ -68,21 +68,19 @@ Looping
                 lo 6 5 6 4
                 wifi0 7 3 7 10             
 
-            formatação da escrita no terminal
+            formatação da escrita no terminal:
                 NETIF         TX        RX     TRATE     RRATE     TXTOT     RXTOT
                 eth0           0         0         0         0         0         0
                 wifi0          0         0         0         0         0         0 
 
 // estou aqui
-Functions
+Funções:
     SortRX e SortTX
-        Usamos um selection sort dependendo do TX ou do RX 
-        O selection sort funciona comparando cada elemento i do array com os elementos seguintes posicionando o mais 
-            mais alto para cima ate acabar o array
+        Usamos um algoritmo de ordenação por seleção para organizarmos o array data dos seguites modos pedido pelo utilizador atravez da função TX ou RX.
+        O algoritmo de ordenação por seleção funciona comparando cada elemento i do array com os elementos seguintes posicionando o mais alto no index acima ate acabar o array.
     Reverse
-        função que inverte o nosso array trocando os valores dos indexes com a mesma distancia ao centro
+        Função que inverte o array trocando os valores dos índices com a mesma distancia ao centro.
     Regex
-        Itera por todas as interfaces da data e se a interface corresponder ao Regex desejado vai desta forma
-        inseri-la num array intermedio para dps dar de novo set ao array data
+        A função itera por todas as interfaces da data e se o nome da interface corresponder à Expreção Regular desejada esta será adcionada a um array intermedio que depois será passado como o array data;
 
-
+        
