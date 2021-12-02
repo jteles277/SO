@@ -82,3 +82,4 @@ Funções:
         Função que inverte o array trocando os valores dos índices com a mesma distância ao centro.
     Regex
         A função itera por todas as interfaces da data e se o nome da interface corresponder à Expressão Regular desejada esta será adicionada a um array intermedio que depois será passado como o array data;
+
