@@ -288,9 +288,9 @@
         if [ $iter -eq 0 ]; then
             if [ $loop -eq 1 ]; 
             then
-                printf "%-6s %9s %9s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE" "TXTOT" "RXTOT";  
+                printf "%-11s %9s %9s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE" "TXTOT" "RXTOT";  
             else
-                printf "%-6s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE"; 
+                printf "%-11s %9s %9s %9s %9s\n" "NETIF" "TX" "RX" "TRATE" "RRATE"; 
             fi  
             
         fi  
@@ -319,9 +319,9 @@
                 tmp_tot_rx=$(echo "${data[$i]}" | awk '{print $5;}');
                 tmp_tot_rx=$((tmp_tot_rx/byte_div));
 
-                printf "%-6s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tmp_tot_tx $tmp_tot_rx;
+                printf "%-11s %9s %9s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate $tmp_tot_tx $tmp_tot_rx;
             else
-                printf "%-6s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate;
+                printf "%-11s %9s %9s %9s %9s\n" $int $tx $rx $t_rate $r_rate;
             fi  
             
         done
