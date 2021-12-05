@@ -103,12 +103,13 @@
     for op in "$@"; do
         #get penultimate argument and checks if is diferent from other cases
         i=$(($i + 1))
-        if [ $i -eq $# ]; then
 
-        continue;
-
-        fi
-        if [ $getMax -eq 1 ]; then         
+        if [ $getMax -eq 1 ]; then    
+            if [ $i -eq $# ]; then
+                echo "error" 
+                echo "Argument after -p should be integer"    #error, last argument should be integer
+                exit 2                                        #error code
+            fi     
             if ! [[ $op =~ ^[0-9]+$ ]] ; then
                 echo "error" 
                 echo "Argument after -p should be integer"    #error, last argument should be integer
@@ -121,6 +122,11 @@
             Regex="$op"
             getRegex=0
             continue;
+        fi        
+        if [ $i -eq $# ]; then
+
+            continue;
+
         fi
         case $op in
             -c)
@@ -270,15 +276,16 @@
                 SortTx
                 ;;
         esac
+        # Reverse
         if [[ $reversed -eq 1 ]]
         then 
             Reverse
         fi
-
+        # -p
         if [ $N -gt $max ]; then
             N=$(($max));
         fi   
-
+        # -c
         if [ ! -z "$Regex" ]; then
             #Regex will remove the ones that dont match regex pattern
             Regex
